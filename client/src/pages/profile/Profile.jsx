@@ -27,7 +27,7 @@ const Profile = () => {
             }),
     });
 
-    const { data: relationshipData } = useQuery({
+    const { isPending: rIsLoading, data: relationshipData } = useQuery({
         queryKey: ['relationship'],
         queryFn: () =>
             makeRequest
@@ -37,7 +37,22 @@ const Profile = () => {
                 }),
     });
 
-    const handleFollow = () => {};
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: (following) => {
+            if (following) return makeRequest.delete('/relationships?userId=' + userId);
+            return makeRequest.post('/relationships', { userId });
+        },
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['relationship'] });
+        },
+    });
+
+    const handleFollow = () => {
+        mutation.mutate(relationshipData.includes(currentUser.id));
+    };
 
     return (
         <div className="profile">
@@ -84,7 +99,7 @@ const Profile = () => {
                                         <span>{data.website}</span>
                                     </div>
                                 </div>
-                                {userId === currentUser.id ? (
+                                {rIsLoading ? 'Loading ...' : userId === currentUser.id ? (
                                     <button>update</button>
                                 ) : (
                                     <button onClick={handleFollow}>
@@ -101,7 +116,7 @@ const Profile = () => {
                                 <MoreVertIcon />
                             </div>
                         </div>
-                        <Posts />
+                        <Posts userId={userId} />
                     </div>
                 </>
             )}
