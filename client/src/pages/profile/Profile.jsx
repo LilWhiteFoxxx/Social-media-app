@@ -9,15 +9,20 @@ import LanguageIcon from '@mui/icons-material/Language';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Posts from '../../components/posts/Posts';
+import Update from '../../components/update/Update';
 import { makeRequest } from '../../axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/authContext';
 
 const Profile = () => {
+    const [openUpdate, setOpenUpdate] = useState(false);
+
     const { currentUser } = useContext(AuthContext);
     const userId = parseInt(useLocation().pathname.split('/')[2]);
+
+    const queryClient = useQueryClient();
 
     const { isPending, data } = useQuery({
         queryKey: ['user'],
@@ -37,11 +42,10 @@ const Profile = () => {
                 }),
     });
 
-    const queryClient = useQueryClient();
-
     const mutation = useMutation({
         mutationFn: (following) => {
-            if (following) return makeRequest.delete('/relationships?userId=' + userId);
+            if (following)
+                return makeRequest.delete('/relationships?userId=' + userId);
             return makeRequest.post('/relationships', { userId });
         },
         onSuccess: () => {
@@ -74,16 +78,16 @@ const Profile = () => {
                                 <a href="http://facebook.com">
                                     <FacebookTwoToneIcon fontSize="large" />
                                 </a>
-                                <a href="http://facebook.com">
+                                <a href="http://instagram.com">
                                     <InstagramIcon fontSize="large" />
                                 </a>
-                                <a href="http://facebook.com">
+                                <a href="http://twitter.com">
                                     <TwitterIcon fontSize="large" />
                                 </a>
-                                <a href="http://facebook.com">
+                                <a href="http://linkedin.com">
                                     <LinkedInIcon fontSize="large" />
                                 </a>
-                                <a href="http://facebook.com">
+                                <a href="http://pinterest.com">
                                     <PinterestIcon fontSize="large" />
                                 </a>
                             </div>
@@ -96,11 +100,15 @@ const Profile = () => {
                                     </div>
                                     <div className="item">
                                         <LanguageIcon />
-                                        <span>{data.website}</span>
+                                        <span>Url</span>
                                     </div>
                                 </div>
-                                {rIsLoading ? 'Loading ...' : userId === currentUser.id ? (
-                                    <button>update</button>
+                                {rIsLoading ? (
+                                    'Loading ...'
+                                ) : userId === currentUser.id ? (
+                                    <button onClick={() => setOpenUpdate(true)}>
+                                        update
+                                    </button>
                                 ) : (
                                     <button onClick={handleFollow}>
                                         {relationshipData.includes(
@@ -120,6 +128,7 @@ const Profile = () => {
                     </div>
                 </>
             )}
+            {openUpdate && <Update setOpenUpdate={setOpenUpdate} />}
         </div>
     );
 };

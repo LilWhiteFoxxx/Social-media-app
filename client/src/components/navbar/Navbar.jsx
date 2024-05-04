@@ -24,9 +24,9 @@ const Navbar = () => {
         </Link>
         <HomeOutlinedIcon />
         {darkMode ? (
-          <WbSunnyOutlinedIcon onClick={toggle} />
+          <WbSunnyOutlinedIcon  onClick={toggle} />
         ) : (
-          <DarkModeOutlinedIcon onClick={toggle} />
+          <DarkModeOutlinedIcon  onClick={toggle} />
         )}
         <GridViewOutlinedIcon />
         <div className="search">
