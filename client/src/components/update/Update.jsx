@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { makeRequest } from '../../axios';
 import './update.scss';
-import { useMutation, useQueryClient} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { AuthContext } from '../../context/authContext';
 
 const Update = ({ setOpenUpdate, user }) => {
+    const { setCurrentUser } = useContext(AuthContext);
     const [cover, setCover] = useState(null);
     const [profile, setProfile] = useState(null);
     const [texts, setTexts] = useState({
@@ -14,6 +16,7 @@ const Update = ({ setOpenUpdate, user }) => {
         city: user.city,
         website: user.website,
     });
+
     const queryClient = useQueryClient();
 
     const upload = async (file) => {
@@ -31,15 +34,15 @@ const Update = ({ setOpenUpdate, user }) => {
         setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
     };
 
-
     const mutation = useMutation({
         mutationFn: (user) => {
-          return makeRequest.put('/users', user)},
-        onSuccess: () => {
-          // Invalidate and refetch
-          queryClient.invalidateQueries({ queryKey: ['user'] })
+            return makeRequest.put('/users', user);
         },
-      })
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['user'] });
+        },
+    });
 
     const handleClick = async (e) => {
         e.preventDefault();
@@ -54,10 +57,20 @@ const Update = ({ setOpenUpdate, user }) => {
             coverPic: coverUrl,
             profilePic: profileUrl,
         });
+
+        const values = {
+            id: user.id,
+            ...texts,
+            coverPic: coverUrl,
+            profilePic: profileUrl,
+        }
+        console.log(values)
+        setCurrentUser(values)
         setOpenUpdate(false);
         setCover(null);
         setProfile(null);
     };
+
     return (
         <div className="update">
             <div className="wrapper">
