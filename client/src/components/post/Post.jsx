@@ -15,8 +15,9 @@ import { AuthContext } from '../../context/authContext';
 const Post = ({ post }) => {
     const [commentOpen, setCommentOpen] = useState(false);
     const { currentUser } = useContext(AuthContext);
+   
     const queryClient = useQueryClient();
-
+    
     const { isLoading: likesLoading, error: likesError, data: likesData } = useQuery({
         queryKey: ['likes', post.id],
         queryFn: () =>
@@ -28,6 +29,8 @@ const Post = ({ post }) => {
         queryFn: () =>
             makeRequest.get(`/comments?postId=${post.id}`).then((res) => res.data),
     });
+
+    
 
     const mutation = useMutation({
         mutationFn: (liked) => {

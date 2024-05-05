@@ -17,6 +17,10 @@
         align-items: center;
         justify-content: space-between;
 
+        svg {
+          cursor: pointer;
+        }
+
         .userInfo {
           display: flex;
           gap: 20px;

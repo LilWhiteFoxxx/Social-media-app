@@ -82,7 +82,7 @@ const Update = ({ setOpenUpdate, user }) => {
                             <div className="imgContainer">
                                 <img
                                     src={
-                                        cover
+                                        cover && cover !== user.coverPic
                                             ? URL.createObjectURL(cover)
                                             : '/upload/' + user.coverPic
                                     }
@@ -102,7 +102,7 @@ const Update = ({ setOpenUpdate, user }) => {
                             <div className="imgContainer">
                                 <img
                                     src={
-                                        profile
+                                        profile && profile !== user.profilePic
                                             ? URL.createObjectURL(profile)
                                             : '/upload/' + user.profilePic
                                     }
